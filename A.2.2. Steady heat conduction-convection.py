@@ -111,21 +111,35 @@ for i in range(2,N+1):
 T[0]=10                 # FIRST WALL BOUNDARY VALUE
 T[N+1]=210              # LAST WALL BOUNDARY VALUE
 
+#   READ CONDUCTIVITY, DENSITY AND SPECIFIC HEAT
+#-------------------------------------------------------------
+
+CON=1
+DEN=1
+SPH=1
+
+#   READ VELOCITY
+#-------------------------------------------------------------
+
+VEL=0.1
+
+#   CHOOSE CONVECTION SCHEME (1 - CD, 2 - UD, 3-CD_UD BLEND)
+#   AND BLENDING FACTOR (1 - CD, 0 - UD)
+#-------------------------------------------------------------
+
+IC=3
+GAMMA=1
+
 #   CHOOSE SOLVER (1 - TDAMA, 2 - GSM) AND GSM TOLERANCE
 #-------------------------------------------------------------
 
-IS=1                   # CHOOSE SOLVER
+IS=2                   # CHOOSE SOLVER
 GSMTOL=0.000001         # GSM TOLERANCE
 
 #   MAX NUMBER OF ITERATIONS (1 FOR LINEAR PROBLEM)
 #-------------------------------------------------------------
 
 MAXIT=1
-
-#   INITIALISE THE CONDUCTIVITY
-#-------------------------------------------------------------
-CON0=1
-CON[:N+2]=CON0
 
 #-------------------------------------------------------------
 #   ITERATION LOOP (START)
@@ -138,25 +152,50 @@ while NIT<MAXIT:
     #   ASSEMBLE COEFFICIENT MATRIX AND THE RIGHT HAND SIDE VECTOR
     #-------------------------------------------------------------
 
+    #   DIFFUSION COEFFICIENTS
+    #-------------------------------------------------------------
+
     for i in range(N):
-        AE[i] = 0.5 * (CON[i+1] + CON[i+2]) * S / DX
-        AW[i] = 0.5 * (CON[i+1] + CON[i]) * S / DX # PYTHON INDEX = FORTRAN INDEX - 1
+        AE[i]=CON*S/DX
+        AW[i]=CON*S/DX
 
+    #   CONVECTION COEFFICIENTS
+    # -------------------------------------------------------------
 
-    AW[0]=2*AW[0]
-    AE[N-1]=2*AE[N-1]
+    FLUX = DEN * VEL * S
 
+    if(IC==1):
+        for i in range(N):
+            AE[i] = AE[i] - 0.5 * SPH * FLUX
+            AW[i] = AW[i] + 0.5 * SPH * FLUX
+
+        AW[0] = 2 * AW[0]
+        AE[N-1] = 2 * AE[N-1]
+    else:
+        AW[0] = 2 * AW[0]
+        AE[N - 1] = 2 * AE[N - 1]
+
+        for i in range(N):
+            AE[i] = AE[i] - SPH * min(FLUX, 0)
+            AW[i] = AW[i] - SPH * min(-FLUX, 0)
+
+    #   CENTRAL COEFFICIENT AND RIGHT HAND SIDE VECTOR
+    # -------------------------------------------------------------
     for i in range(N):
         AP[i]=AW[i]+AE[i]
         B[i]=0
-
+    if(IC==3):
+        for i in range(N):
+            B[i]=B[i] + GAMMA * SPH * ((min(FLUX, 0) - 0.5 * FLUX) * (T[i+2] - T[i+1]) + (min(-FLUX,0) + 0.5 * FLUX)*(T[i]-T[i+1]))
 
     #   BOUNDARY CONDITIONS
     #-------------------------------------------------------------
 
     B[0] = B[0] + AW[0] * T[0]
     B[N-1] = B[N-1] + AE[N-1] * T[N+1]
-
+    if(IC==3):
+        B[0] = B[0] + GAMMA * SPH * 0.5 * FLUX * (T[0]-T[1])
+        B[N] = B[N] - GAMMA * SPH * 0.5 * FLUX * (T[N+1] - T[N])
     #-------------------------------------------------------------
     #   SOLVE LINEAR EQUATION SYSTEM
     #-------------------------------------------------------------
@@ -167,14 +206,6 @@ while NIT<MAXIT:
         GSM()
 
     #-------------------------------------------------------------
-    #   UPDATE CONDUCTIVITY (FOR NONLINEAR PROBLEM)
-    #-------------------------------------------------------------
-
-    if(MAXIT>1):
-        for i in range(1,N+1):
-            CON[i]=CON0*T[i]
-
-    #-------------------------------------------------------------
     #   ITERATION LOOP (END)
     #-------------------------------------------------------------
 
@@ -182,20 +213,22 @@ while NIT<MAXIT:
 #   PRINT RESULTS ON THE SCREEN AND ON THE OUTPUT FILE
 #-------------------------------------------------------------
 else:
+    PE= VEL * (X[N+1] - X[0]) * SPH * DEN / CON
+    print(" PECLET NUMBER: PE= ",PE)
+    if (IC==1):
+        print(" CDS USED FOR CONVECTION ")
+    elif (IC==2):
+        print(" UDS USED FOR CONVECTION ")
+    elif (IC==3):
+        print(" BLEND OF CDS AND UDS USED FOR CONVECTION: GAMMA= ",GAMMA)
+
     if(IS==1):
         print("\n TDMA SOLVER \n")
-    if(IS==2):
+    elif(IS==2):
         print(f"\n GAUSS-SEIDEL SOLVER: {ITGS} ITERATIONS \n")
 
-print(f"{'I':<3} {'X':<5} {'T':<20} {'TEXACT':<20} {'ERROR':<20}")
-ERROR =0
-for i in range(1,N+1):
-    if MAXIT==1:
-        #   CASE 1 : CONSTANT CONDUCTIVITY
-        TEX[i-1]=((T[i+1]-T[0])*(X[i]-X[0]))/(X[i+1]-X[0])+T[0] # FLOAT POINT ERROR PRESENT
-    else:
-        #   CASE 2 : CONDUCTIVITY PROPORTIONAL TO TEMPERATURE
-        TEX[i-1]=math.sqrt(((T[i+1]**2-T[0]**2)*(X[i]-X[0]))/(X[i+1]-X[0])+T[0]**2)
-    #TEX=[20,40,60,80,100,120,140,160,180,200]                   # UNCOMMENT FOR ORIGINAL INPUT (NO FLOAT POINT ERROR)
-    ERROR=ERROR+abs(TEX[i-1]-T[i])
-    print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i-1]:<20} {ERROR:<20}")
+    print(f"{'I':<3} {'X':<5} {'T':<20} {'TEXACT':<20} {'ERROR':<20}")
+
+    ERROR =0
+   # for i in range(1,N+1):
+        #OVDJE FALI KODA
