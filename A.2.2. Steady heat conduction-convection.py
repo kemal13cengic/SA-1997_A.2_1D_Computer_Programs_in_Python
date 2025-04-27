@@ -2,17 +2,17 @@
 
 # WORK IN PROGRESS
 
-# TESTED AND WORKING FOR LINEAR PROBLEMS (CONSTANT CONDUCTIVITY)
-
-
 ##############################################
 
 
 #-------------------------------------------------------------
-#   SOLVES STEADY 1D HEAT CONDUCTION PROBLEM FOR:
+#   SOLVES STEADY 1D HEAT CONDUCTION-CONVECTIN PROBLEM FOR:
 #       - DIRICHLET BOUNDARY CONDITIONS
-#       - CONSTANT OR VARIABLE CONDUCTIVITY
+#       - CONSTANT CONDUCTIVITY, DENSITY AND SPECIFIC HEAT
+#         AND A GIVEN VELOCITY
 #   BY EMPLOYING:
+#       - 1ST ORDER, 2ND ORDER OR A 1ST_2ND ORDER BLEND SCHEME
+#         FOR CONVECTION APPROXIMATION
 #       - TDMA OR GSM LINEAR EQUATION SOLVER
 #-------------------------------------------------------------
 
@@ -36,6 +36,7 @@ def TDMA():
     T[N] = B[N-1] / AP[N-1]
     for i in range(N-1,0,-1):
         T[i] = (B[i-1] + AE[i-1] * T[i+1]) / AP[i-1]
+    print(T)
 
 #-------------------------------------------------------------
 #   SUBROUTINE GSM
@@ -84,7 +85,6 @@ T=np.zeros(NCV+2)       # TEMPERATURE
 ITGS=0                  # ITERATIONS OF GAUSS-SEIDEL
 GSMTOL=0                # GSM TOLERANCE
 
-CON=np.zeros(NCV+2)     # CONDUCTIVITY
 TEX=np.zeros(NCV)       # EXACT TEMPERATURE
 X=np.zeros(NCV+2)
 

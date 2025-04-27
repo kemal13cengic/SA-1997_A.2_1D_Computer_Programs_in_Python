@@ -36,6 +36,7 @@ def TDMA():
     T[N] = B[N-1] / AP[N-1]
     for i in range(N-1,0,-1):
         T[i] = (B[i-1] + AE[i-1] * T[i+1]) / AP[i-1]
+    print(T)
 
 #-------------------------------------------------------------
 #   SUBROUTINE GSM
@@ -81,11 +82,11 @@ AW=np.zeros(NCV)
 AP=np.zeros(NCV)
 B=np.zeros(NCV)         # RIGHT HAND SIDE VECTOR
 T=np.zeros(NCV+2)       # TEMPERATURE
-ITGS=0                  # ITERATIONS OF GAUSS-SEIDEL
+ITGS=0                  #
 GSMTOL=0                # GSM TOLERANCE
 
 CON=np.zeros(NCV+2)     # CONDUCTIVITY
-TEX=np.zeros(NCV)       # EXACT TEMPERATURE
+TEX=np.zeros(NCV)       #
 X=np.zeros(NCV+2)
 
 #-------------------------------------------------------------
@@ -199,3 +200,11 @@ for i in range(1,N+1):
     #TEX=[20,40,60,80,100,120,140,160,180,200]                   # UNCOMMENT FOR ORIGINAL INPUT (NO FLOAT POINT ERROR)
     ERROR=ERROR+abs(TEX[i-1]-T[i])
     print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i-1]:<20} {ERROR:<20}")
+
+
+
+
+
+
+
+

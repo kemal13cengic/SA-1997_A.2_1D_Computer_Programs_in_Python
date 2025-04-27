@@ -3,6 +3,9 @@
 
 # WOOOOOOOOOOOOOOOOOORK IN PROOOOOOOOOOOGRESS
 
+# PROVJERI CINJENICU DA u FORTRAN_ARRAY(i) = np.array(i-1)
+# SVE MORAS NESTATI U TIME LOOP!!!
+
 ##############################################
 
 
@@ -88,7 +91,7 @@ for i in range(1,N):
     AW[i] = CON * S / DX
 
 AW[1]=2*AW[1]
-AE[1]=2*AE[N]
+AE[N]=2*AE[N]
 
 #   TRANSIENT TERM DISCRETISATION AND AP (AND T FOR EX SCHEME) CALCULATION
 #-------------------------------------------------------------
