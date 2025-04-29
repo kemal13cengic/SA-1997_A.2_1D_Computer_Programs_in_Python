@@ -139,7 +139,7 @@ GSMTOL=0.000001         # GSM TOLERANCE
 #   MAX NUMBER OF ITERATIONS (1 FOR LINEAR PROBLEM)
 #-------------------------------------------------------------
 
-MAXIT=1
+MAXIT=10
 
 #-------------------------------------------------------------
 #   ITERATION LOOP (START)
@@ -195,7 +195,7 @@ while NIT<MAXIT:
     B[N-1] = B[N-1] + AE[N-1] * T[N+1]
     if(IC==3):
         B[0] = B[0] + GAMMA * SPH * 0.5 * FLUX * (T[0]-T[1])
-        B[N] = B[N] - GAMMA * SPH * 0.5 * FLUX * (T[N+1] - T[N])
+        B[N-1] = B[N-1] - GAMMA * SPH * 0.5 * FLUX * (T[N+1] - T[N]) #PROBLEM OVDJE
     #-------------------------------------------------------------
     #   SOLVE LINEAR EQUATION SYSTEM
     #-------------------------------------------------------------
@@ -214,21 +214,26 @@ while NIT<MAXIT:
 #-------------------------------------------------------------
 else:
     PE= VEL * (X[N+1] - X[0]) * SPH * DEN / CON
-    print(" PECLET NUMBER: PE= ",PE)
+    print("\nPECLET NUMBER: PE = ",PE,"\n")
     if (IC==1):
-        print(" CDS USED FOR CONVECTION ")
+        print("CDS USED FOR CONVECTION ")
     elif (IC==2):
-        print(" UDS USED FOR CONVECTION ")
+        print("UDS USED FOR CONVECTION ")
     elif (IC==3):
-        print(" BLEND OF CDS AND UDS USED FOR CONVECTION: GAMMA= ",GAMMA)
+        print("BLEND OF CDS AND UDS USED FOR CONVECTION: GAMMA = ",GAMMA)
 
     if(IS==1):
-        print("\n TDMA SOLVER \n")
+        print("\nTDMA SOLVER \n")
     elif(IS==2):
-        print(f"\n GAUSS-SEIDEL SOLVER: {ITGS} ITERATIONS \n")
+        print(f"\nGAUSS-SEIDEL SOLVER: {ITGS} ITERATIONS \n")
 
     print(f"{'I':<3} {'X':<5} {'T':<20} {'TEXACT':<20} {'ERROR':<20}")
 
-    ERROR =0
-   # for i in range(1,N+1):
-        #OVDJE FALI KODA
+    ERROR = 0
+    for i in range(1,N+1):
+        TEX[i-1]=T[0] + (math.exp(PE*(X[i]-X[0])/(X[N+1]-X[0]))-1)/(math.exp(PE)-1)*(T[N+1]-T[0]) # TO BE CHECKED
+        ERROR+=abs(TEX[i-1]-T[i])
+        print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i - 1]:<20} {ERROR:<20}")
+
+    ERROR=ERROR/N
+    print("AVERAGE ERROR = ", ERROR)
