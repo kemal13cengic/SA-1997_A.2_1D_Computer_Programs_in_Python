@@ -4,9 +4,7 @@
 
 # TESTED AND WORKING FOR LINEAR PROBLEMS (CONSTANT CONDUCTIVITY)
 
-
 ##############################################
-
 
 #-------------------------------------------------------------
 #   SOLVES STEADY 1D HEAT CONDUCTION PROBLEM FOR:
@@ -198,4 +196,7 @@ for i in range(1,N+1):
         TEX[i-1]=math.sqrt(((T[i+1]**2-T[0]**2)*(X[i]-X[0]))/(X[i+1]-X[0])+T[0]**2)
     #TEX=[20,40,60,80,100,120,140,160,180,200]                   # UNCOMMENT FOR ORIGINAL INPUT (NO FLOAT POINT ERROR)
     ERROR=ERROR+abs(TEX[i-1]-T[i])
-    print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i-1]:<20} {ERROR:<20}")
+    print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i-1]:<20} {T[i]-TEX[i-1]:<20}")
+
+ERROR=ERROR/N
+print("\nAVERAGE ERROR = ", ERROR)
