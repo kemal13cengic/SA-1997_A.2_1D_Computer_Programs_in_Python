@@ -108,7 +108,7 @@ for i in range(2,N+1):
 #   BOUNDARY VALUES
 #-------------------------------------------------------------
 
-T[0]=10                 # FIRST WALL BOUNDARY VALUE
+T[0]=10                # FIRST WALL BOUNDARY VALUE
 T[N+1]=210              # LAST WALL BOUNDARY VALUE
 
 #   READ CONDUCTIVITY, DENSITY AND SPECIFIC HEAT
@@ -231,9 +231,9 @@ else:
 
     ERROR = 0
     for i in range(1,N+1):
-        TEX[i-1]=T[0] + (math.exp(PE*(X[i]-X[0])/(X[N+1]-X[0]))-1)/(math.exp(PE)-1)*(T[N+1]-T[0]) # TO BE CHECKED
+        TEX[i-1]=T[0] + (math.exp(PE*(X[i]-X[0])/(X[N+1]-X[0]))-1)/(math.exp(PE)-1)*(T[N+1]-T[0])
         ERROR+=abs(TEX[i-1]-T[i])
-        print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i - 1]:<20} {ERROR:<20}")
+        print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i - 1]:<20} {TEX[i-1]-T[i]:<20}")
 
     ERROR=ERROR/N
-    print("AVERAGE ERROR = ", ERROR)
+    print("\nAVERAGE ERROR = ", ERROR)

@@ -19,6 +19,8 @@
 import numpy as np
 import math
 
+np.set_printoptions(precision=30, threshold=np.inf)
+
 #-------------------------------------------------------------
 #   SUBROUTINE TDMA
 #-------------------------------------------------------------
@@ -197,9 +199,11 @@ for i in range(1,N+1):
     else:
         #   CASE 2 : CONDUCTIVITY PROPORTIONAL TO TEMPERATURE
         TEX[i-1]=math.sqrt(((T[i+1]**2-T[0]**2)*(X[i]-X[0]))/(X[i+1]-X[0])+T[0]**2)
-    #TEX=[20,40,60,80,100,120,140,160,180,200]                   # UNCOMMENT FOR ORIGINAL INPUT (NO FLOAT POINT ERROR)
+    # TEX=[20,40,60,80,100,120,140,160,180,200]                   # UNCOMMENT FOR ORIGINAL INPUT (NO FLOAT POINT ERROR)
     ERROR=ERROR+abs(TEX[i-1]-T[i])
-    print(f"{i:<3} {X[i]:<5} {T[i]:<20} {TEX[i-1]:<20} {ERROR:<20}")
+    print(f"{i:<3} {X[i]:<5.1f} {T[i]:<20.15f} {TEX[i-1]:<20.15f} {(T[i] - TEX[i-1]):<20.15e}")
+
+    print(type(T[1]))
 
 
 

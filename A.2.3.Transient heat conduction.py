@@ -22,7 +22,7 @@
 
 import numpy as np
 
-NCV=100
+NCV=10
 AE=np.zeros(NCV)
 AW=np.zeros(NCV)
 AP=np.zeros(NCV)
@@ -30,6 +30,24 @@ B=np.zeros(NCV)
 T=np.zeros(NCV+2)
 T0=np.zeros(NCV+2)
 X=np.zeros(NCV+2)
+
+#-------------------------------------------------------------
+#   SUBROUTINE TDMA
+#-------------------------------------------------------------
+def TDMA():
+    global T, AE, AW, B, AP, N
+
+    #   CALCULATE NEW AP(i) AND B(i)
+    # -------------------------------------------------------------
+    for i in range(1,N):
+        AP[i] = AP[i] - AW[i] * AE[i-1] / AP[i-1]
+        B[i] = B[i] + AW[i] * B[i-1] / AP[i-1]
+
+    #   CALCULATE VARIABLE VALUES - BACKWARD SUBSTITUTION
+    # -------------------------------------------------------------
+    T[N] = B[N-1] / AP[N-1]
+    for i in range(N-1,0,-1):
+        T[i] = (B[i-1] + AE[i-1] * T[i+1]) / AP[i-1]
 
 #-------------------------------------------------------------
 #   INPUT DATA
@@ -78,55 +96,54 @@ for i in range(1,NTSTEP+1):
     T0[1:N+1] = T[1:N+1]
 
 
+    #-------------------------------------------------------------
+    #   ASSEMBLE COEFFICIENT MATRIX AND THE RIGHT HAND SIDE VECTOR
+    #-------------------------------------------------------------
+
+    #   DIFFUSION COEFFICIENTS
+    #-------------------------------------------------------------
+
+    for i in range(0,N-1):
+        AE[i] = CON * S / DX
+        AW[i] = CON * S / DX
+
+    AW[0]=2*AW[0]
+    AE[N-1]=2*AE[N-1]
+
+    #   TRANSIENT TERM DISCRETISATION AND AP (AND T FOR EX SCHEME) CALCULATION
+    #-------------------------------------------------------------
+
+    if(IT==1):
+        # EXPLICIT
+        for i in range(0,N-1):
+            B[i] = AE[i] * T0[i+1] + AW[i] * T0[i-1] + ((V/DT) * DEN * SPH - AE[i] - AW[i]) * T0[i]
+            AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
+    elif(IT==2):
+        # FULLY IMPLICIT
+        for i in range(0,N-1):
+            B[i] = (V/DT) * DEN * SPH * T0[i]
+            AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
+    elif(IT==3):
+        # CRANK-NICOLSON
+        for i in range(0,N-1):
+            AE[i] = 0.5 * AE[i]
+            AW[i] = 0.5 * AW[i]
+            B[i] = AE[i] * T0[i+1] + AW[i] * T0[i-1] + ((V/DT) * DEN * SPH - AE[i] - AW[i]) * T0[i]
+            AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
+
+    #   BOUNDARY CONDITIONS
+    #-------------------------------------------------------------
+
+    B[0] = B[0] + AW[0] * T[0]
+    B[N-1] = B[N-1] + AE[N-1] * T[N+1]
+
 #-------------------------------------------------------------
-#   ASSEMBLE COEFFICIENT MATRIX AND THE RIGHT HAND SIDE VECTOR
+#   SOLVE LINEAR EQATION SYSTEM (FOR F-I AND C-N SCHEME)
 #-------------------------------------------------------------
 
-
-#   DIFFUSION COEFFICIENTS
-#-------------------------------------------------------------
-
-for i in range(1,N):
-    AE[i] = CON * S / DX
-    AW[i] = CON * S / DX
-
-AW[1]=2*AW[1]
-AE[N]=2*AE[N]
-
-#   TRANSIENT TERM DISCRETISATION AND AP (AND T FOR EX SCHEME) CALCULATION
-#-------------------------------------------------------------
-
-if(IT==1):
-    # EXPLICIT
-    for i in range(1,N):
-        B[i] = AE[i] * T0[i+1] + AW[i] * T0[i-1] + ((V/DT) * DEN * SPH - AE[i] - AW[i]) * T0[i]
-        AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
-elif(IT==2):
-    # FULLY IMPLICIT
-    for i in range(1,N):
-        B[i] = (V/DT) * DEN * SPH * T0[i]
-        AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
-elif(IT==3):
-    # CRANK-NICOLSON
-    for i in range(1,N):
-        AE[i] = 0.5 * AE[i]
-        AW[i] = 0.5 * AW[i]
-        B[i] = AE[i] * T0[i+1] + AW[i] * T0[i-1] + ((V/DT) * DEN * SPH - AE[i] - AW[i]) * T0[i]
-        AP[i] = (V/DT) * DEN * SPH + AE[i] + AW[i]
-
-#   BOUNDARY CONDITIONS
-#-------------------------------------------------------------
-
-    B[1] = B[1] + AW[1] * T[0]
-    B[N] = B[N] + AE[N] * T[N+1]
-
-#-------------------------------------------------------------
-#   ASSEMBLE COEFFICIENT MATRIX AND THE RIGHT HAND SIDE VECTOR
-#-------------------------------------------------------------
-
-# !!!!!!!!!!!!!!!!CALL TDMA !!!!!!!!!!!!!!!!!!!!
+TDMA()
 
 #-------------------------------------------------------------
 #   PRINT RESULTS ON THE SCREEN AND ON THE OUTPUT FILE
 #-------------------------------------------------------------
-
+print("Finito")
