@@ -235,8 +235,5 @@ else:
         ERROR += abs(TEX[i - 1] - T[i])
         print(f"{i:<3} {float(X[i]):<5.2f} {float(T[i]):<20.10f} {float(TEX[i - 1]):<20.10f} {float(TEX[i-1] - T[i]):<20.10f}")
 
-
-      #  print(i,X[i],T[i],TEX[i-1],TEX[i-1]-T[i])
-
     ERROR /= N
     print("\nAVERAGE ERROR = ", ERROR)
