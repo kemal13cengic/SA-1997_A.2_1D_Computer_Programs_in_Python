@@ -9,3 +9,5 @@ The programs in the appendix are designed to solve 1D problems of:
 - Transient heat conduction (**Program A.2.3 Transient heat conduction**)
 
 These solvers utilize **linear equation solvers** based on either **TDMA** (Tri-Diagonal Matrix Algorithm) or **GSM** (Gauss-Seidel Method).
+
+There are also **arbitrary precision versions** of all three programs, utilizing the `mpmath` library, available in a separate directory.
