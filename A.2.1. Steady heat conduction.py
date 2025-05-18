@@ -1,11 +1,3 @@
-##############################################
-
-# WORK IN PROGRESS
-
-# TESTED AND WORKING FOR LINEAR PROBLEMS (CONSTANT CONDUCTIVITY)
-
-##############################################
-
 #-------------------------------------------------------------
 #   SOLVES STEADY 1D HEAT CONDUCTION PROBLEM FOR:
 #       - DIRICHLET BOUNDARY CONDITIONS

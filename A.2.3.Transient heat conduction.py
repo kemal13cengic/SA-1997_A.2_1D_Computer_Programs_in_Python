@@ -1,11 +1,3 @@
-
-##############################################
-
-# WOOOOOOOOOOOOOOOOOORK IN PROOOOOOOOOOOGRESS
-
-##############################################
-
-
 #-------------------------------------------------------------
 #   SOLVES UNSTEADY 1D HEAT CONDUCTION PROBLEM FOR:
 #       - DIRICHLET BOUNDARY CONDITIONS
@@ -79,7 +71,7 @@ DT=0.4                  # TIME STEP SIZE
 NTSTEP=200              # NUMBER OF TIME STEPS
 NPRF=10                 # FREQUENCY OF PRINT OUT
 
-IT=1                    # TEMPORAL DIFFERENCING SCHEME (1-EX, 2-FI, 3-CN)
+IT=3                    # TEMPORAL DIFFERENCING SCHEME (1-EX, 2-FI, 3-CN)
 
 #-------------------------------------------------------------
 #   TIME LOOP (START)

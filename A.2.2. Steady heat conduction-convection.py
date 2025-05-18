@@ -1,10 +1,3 @@
-##############################################
-
-# WORK IN PROGRESS
-
-##############################################
-
-
 #-------------------------------------------------------------
 #   SOLVES STEADY 1D HEAT CONDUCTION-CONVECTIN PROBLEM FOR:
 #       - DIRICHLET BOUNDARY CONDITIONS
@@ -127,10 +120,10 @@ VEL=0.1
 #   AND BLENDING FACTOR (1 - CD, 0 - UD)
 #-------------------------------------------------------------
 
-IC=3
+IC=2
 GAMMA=1
 
-#   CHOOSE SOLVER (1 - TDAMA, 2 - GSM) AND GSM TOLERANCE
+#   CHOOSE SOLVER (1 - TDMA, 2 - GSM) AND GSM TOLERANCE
 #-------------------------------------------------------------
 
 IS=2                   # CHOOSE SOLVER
