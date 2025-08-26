@@ -137,8 +137,8 @@ for i in range(1,NTSTEP+1):
 #   PRINT RESULTS ON THE SCREEN AND ON THE OUTPUT FILE
 #-------------------------------------------------------------
     if NT==1:
-        CO= CON * DT / (DEN * SPH * DX**2)
-        print("\n COURANT NUMBER : CO = ",CO)
+        FO= CON * DT / (DEN * SPH * DX**2) # THERE IS A MISTAKE IN THE APPENDIX OF THE LECTURE NOTES HERE (COURANT INSTEAD OF FOURIER NUMBER)
+        print("\n FOURIER NUMBER : FO = ",FO)
         print("\n TIME STEP : DT = ",DT)
         if   IT == 1:
            print("\n EXPLICIT TRANSIENT TERM DISCRETIZATION")
